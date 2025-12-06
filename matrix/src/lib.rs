@@ -18,6 +18,35 @@ impl<T: fmt::Display> fmt::Display for Matrix<T> {
         Ok(())
     }
 }
+rdIterator {
+    next_item: usize,
+    row_size: usize,
+    col_size: usize,
+}
+
+impl<T: PartialEq + Clone> From<&Matrix<T>> for CoordIterator {
+    fn from(value: &Matrix<T>) -> Self {
+        CoordIterator {
+            next_item: 0,
+            row_size: value.num_rows(),
+            col_size: value.num_cols(),
+        }
+    }
+}
+
+impl Iterator for CoordIterator {
+    type Item = (usize, usize);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.next_item >= self.row_size * self.col_size {
+            return None;
+        }
+
+        let ret = (self.next_item % self.col_size, self.next_item / self.col_size);
+        self.next_item += 1;
+        Some(ret)
+    }
+}
 
 impl<T: Clone> FromIterator<Vec<T>> for Matrix<T> {
     fn from_iter<I: IntoIterator<Item = Vec<T>>>(iter: I) -> Self {
@@ -60,6 +89,10 @@ impl<T: Clone + PartialEq> Matrix<T> {
 
     pub fn num_cols(&self) -> usize {
         self.contents[0].len()
+    }
+
+    pub fn coord_iter(&self) -> impl Iterator<Item = (usize, usize)> {
+        CoordIterator::from(self)
     }
 
     pub fn row(&self, idx: usize) -> Result<Vec<T>> {
