@@ -174,6 +174,27 @@ impl<T: Clone + PartialEq> Matrix<T> {
         ret
     }
 
+    pub fn get_neighbors_diag(&self, x: usize, y: usize) -> Vec<([usize; 2], T)> {
+        let mut ret = self.get_neighbors(x, y);
+        if (x > 0 && y > 0) {
+            ret.push(([x - 1, y - 1], self.get(x - 1, y - 1).unwrap()));
+        }
+
+        if (x > 0 && y < self.num_cols() - 1) {
+            ret.push(([x - 1, y + 1], self.get(x - 1, y + 1).unwrap()));
+        }
+
+        if (x< self.num_cols() - 1 && y > 0) {
+            ret.push(([x + 1, y - 1], self.get(x + 1, y - 1).unwrap()));
+        }
+
+        if (x < self.num_rows() - 1 && y < self.num_cols() - 1) {
+            ret.push(([x + 1, y + 1], self.get(x + 1, y + 1).unwrap()));
+        }
+
+        ret
+    }
+
     pub fn get_sub_matrix(&self, x: usize, y: usize, size: [usize; 2]) -> Result<Matrix<T>> {
         if size[0] % 2 == 0 || size[1] % 2 == 0 {
             bail!("Matrix sizes must not be even numbers.");
