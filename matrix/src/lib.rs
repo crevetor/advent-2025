@@ -18,7 +18,7 @@ impl<T: fmt::Display> fmt::Display for Matrix<T> {
         Ok(())
     }
 }
-rdIterator {
+struct CoordIterator {
     next_item: usize,
     row_size: usize,
     col_size: usize,
